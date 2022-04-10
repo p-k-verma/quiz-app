@@ -15,7 +15,7 @@
         </div>
         <div class="buttons">
             <button class="quit" @click="exit">Exit Quiz</button>
-            <button class="restart" @click="start_quiz">Continue</button>
+            <button class="restart" @click="start_quiz, timeInterval">Continue</button>
         </div>
     </div>
 
@@ -25,9 +25,9 @@
             <div class="title">Awesome Quiz Application</div>
             <div class="timer">
                 <div class="time_left_txt">Time Left</div>
-                <div class="timer_sec">15</div>
+                <div class="timer_sec">{{ timedata }}</div>
             </div>
-            <div class="time_line"></div>
+            <div id="time_line" class="time_line"></div>
         </header>
         <section>
             <div class="que_text">
@@ -35,10 +35,11 @@
                 <div>{{ mainquestion }}</div>
             </div>
             <div class="option_list" >
-                <div class="option" :class="[{disabled:disabled, correct:correct}]"  v-for="(option,index) in questions" :key="index" @click="choosevalue(option)">
-                    <span>
+                <div class="option" :class="[{disabled:disabled,incorrect:activeAnswerIndex == index,correct:option == correct_answer }]"  v-for="(option,index) in questions" :key="index" @click="choosevalue(option,index)">
+                    <span :class="{correct:option == correct_answer }">
                         {{option}}
                     </span>
+                    <div v-if="option == correct_answer" class="icon tick"><i class="fas fa-check"></i></div>
                 </div>
             </div>
         </section>
@@ -79,25 +80,54 @@ export default {
   },
   data() {
       return {
-          quiz: false,
-          questions:[],
-          category:"",
-          mainquestion:'',
-          clickoption:'',
-          disabled:false,
-          correct:false,
-          correct_answer:''
+        quiz: false,
+        questions:[],
+        category:"",
+        mainquestion:'',
+        clickoption:'',
+        disabled:false,
+        correct:false,
+        correct_answer:'',
+        activeAnswerIndex:-1,
+        choosen:'',
+        timedata: 15,
+        linewidth: 549,
       }
   },
-  created(){
+  mounted() {
       this.apicall();
+      this.timeInterval();
   },
   methods: {
-      choosevalue(ch_value){
+      timeInterval(){
+         var timeoo = setInterval(() => {
+              this.timedata--;
+            //   document.getElementsByClassName("time_line").style.width = "100px";
+              if (this.timedata == 0) {
+                  this.timedata = 0;
+                  clearInterval(timeoo)
+              }
+          }, 1000);
+          var line = setInterval(() => {
+                this.linewidth-- 
+                document.getElementById("time_line").style.width = `${this.linewidth}px`;
+                if (this.linewidth < 250) {
+                        document.getElementById("time_line").style.background = "red"
+                    }
+                if (this.linewidth == 0) {
+                    clearInterval(line)
+                }
+              }, 28.4);
+      },
+      choosevalue(ch_value,index){
         this.disabled = true;
-        if (ch_value == this.correct_answer) {
-            console.log("sahiiii h bhai");
-            this.correct = true;
+        // document.getElementById("time_line").style.width = `0px`;
+        // this.timedata = 0;
+        if (ch_value !== this.correct_answer) {            
+            this.activeAnswerIndex = index;
+            this.choosen = this.correct_answer
+        } else {
+            console.log();
         }
       },
       start_quiz(){
@@ -115,6 +145,7 @@ export default {
               this.questions.push(response.data[0].correctAnswer);
               this.questions.push(...response.data[0].incorrectAnswers);
               this.questions.sort();
+              console.log("======>",response);
           })
       }
   },
