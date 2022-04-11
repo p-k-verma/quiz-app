@@ -35,11 +35,12 @@
                 <div>{{ mainquestion }}</div>
             </div>
             <div class="option_list" >
-                <div class="option" :class="[{disabled:disabled,incorrect:activeAnswerIndex == index,correct:option == correct_answer }]"  v-for="(option,index) in questions" :key="index" @click="choosevalue(option,index)">
-                    <span :class="{correct:option == correct_answer }">
+                <div class="option" :class="[{disabled:disabled,incorrect:activeAnswerIndex == index,correct:checkinganswer == index }]"  v-for="(option,index) in questions" :key="index" @click="choosevalue(option,index)">
+                    <span>
                         {{option}}
                     </span>
-                    <div v-if="option == correct_answer" class="icon tick"><i class="fas fa-check"></i></div>
+                    <div v-if="checkinganswer == index" class="icon" :class="{tick:checkinganswer == index}"><i class="fa fa-check" aria-hidden="true"></i></div>
+                    <div v-if="activeAnswerIndex == index" class="icon cross"><i class="fa fa-times" aria-hidden="true"></i></div>
                 </div>
             </div>
         </section>
@@ -47,9 +48,9 @@
         <!-- footer of Quiz Box -->
         <footer>
             <div class="total_que">
-                <!-- Here I've inserted Question Count Number from JavaScript -->
+                <span>Your Score is <br><p> {{totalcorrect}}</p> of <p>{{ totaldone }}</p> Questions</span>
             </div>
-            <button class="next_btn">Next Que</button>
+            <button class="next_btn" :class="{show:nextque}" @click='next_question'>Next Que</button>
         </footer>
     </div>
 
@@ -92,6 +93,13 @@ export default {
         choosen:'',
         timedata: 15,
         linewidth: 549,
+        totalcorrect: 0,
+        totaldone: 0,
+        nextque: false,
+        firstinterval: null,
+        secondinterval: null,
+        ticking: false,
+        checkinganswer: -1,
       }
   },
   mounted() {
@@ -99,35 +107,49 @@ export default {
       this.timeInterval();
   },
   methods: {
+      next_question() {
+          this.questions = [];
+          this.activeAnswerIndex = -1;
+          this.disabled = false;
+          this.timedata = 15;
+          this.linewidth = 549;
+          this.checkinganswer = -1,
+          this.apicall();
+          this.timeInterval();
+      },
       timeInterval(){
-         var timeoo = setInterval(() => {
+         this.firstinterval = setInterval(() => {
               this.timedata--;
-            //   document.getElementsByClassName("time_line").style.width = "100px";
               if (this.timedata == 0) {
                   this.timedata = 0;
-                  clearInterval(timeoo)
+                  clearInterval(this.firstinterval)
               }
           }, 1000);
-          var line = setInterval(() => {
+          this.secondinterval = setInterval(() => {
                 this.linewidth-- 
                 document.getElementById("time_line").style.width = `${this.linewidth}px`;
                 if (this.linewidth < 250) {
                         document.getElementById("time_line").style.background = "red"
                     }
                 if (this.linewidth == 0) {
-                    clearInterval(line)
+                    clearInterval(this.secondinterval)
                 }
               }, 28.4);
       },
       choosevalue(ch_value,index){
+        this.ticking = true;
         this.disabled = true;
-        // document.getElementById("time_line").style.width = `0px`;
-        // this.timedata = 0;
+        this.nextque = true;
+        clearInterval(this.firstinterval)
+        clearInterval(this.secondinterval)
         if (ch_value !== this.correct_answer) {            
             this.activeAnswerIndex = index;
-            this.choosen = this.correct_answer
+            this.choosen = this.correct_answer;
+            this.totaldone++;
         } else {
-            console.log();
+            this.checkinganswer = index;
+            this.totaldone++;
+            this.totalcorrect++;
         }
       },
       start_quiz(){
