@@ -294,8 +294,8 @@ footer button{
     outline: none;
     color: #fff;
     border-radius: 5px;
-    background: ##7ea78a;
-    border: 1px solid ##7ea78a;
+    background: #7ea78a;
+    border: 1px solid #7ea78a;
     line-height: 10px;
     opacity: 0;
     pointer-events: none;
@@ -397,7 +397,50 @@ footer button.show{
     transform: translate(-50%, -50%) scale(1);
     color: #6e6e6e;
 }
+.total_que .mobile {
+    display: none;
+}
+.total_que .desktop {
+    display: block;
+}
 @media screen and ( max-width: 767px) {
+    .next_btn.show {
+        font-size: 16px;
+    } 
+    .time_left_txt {
+        font-size: 14px !important;
+    }
+    section .option_list .option {
+        font-size: 15px;
+    }
+    .quiz_box.quizclass .title {
+        font-size: 18px;
+    }
+    .total_que {
+        font-size: 14px;
+    }
+    .que_text {
+        font-size: 18px;
+    }
+    .total_que .desktop {
+        display: none;
+    }
+    .total_que .mobile {
+        display: block;
+    }
+    .quiz_box.quizclass {
+        width: 90%;
+        left: 50%;
+        top: 50%;
+    } 
+    footer {
+        padding: 0px 15px;
+    }
+    .info_box.openinfo {
+        width: 90%;
+        left: 50%;
+        top: 50%;
+    }
     .info_box.activeInfo {
         
         width: 100%;

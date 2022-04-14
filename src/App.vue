@@ -48,25 +48,12 @@
         <!-- footer of Quiz Box -->
         <footer>
             <div class="total_que">
-                <span>Your Score is <br><p> {{totalcorrect}}</p> of <p>{{ totaldone }}</p> Questions</span>
+                <span class="desktop">Your Score is {{totalcorrect}} of {{ totaldone }} Questions</span>
+                <span class="mobile">Your Score is <br> {{totalcorrect}} of {{ totaldone }} Questions</span>
+                
             </div>
             <button class="next_btn" :class="{show:nextque}" @click='next_question'>Next Que</button>
         </footer>
-    </div>
-
-    <!-- Result Box -->
-    <div class="result_box">
-        <div class="icon">
-            <i class="fas fa-crown"></i>
-        </div>
-        <div class="complete_text">You've completed the Quiz!</div>
-        <div class="score_text">
-            <!-- Here I've inserted Score Result from JavaScript -->
-        </div>
-        <div class="buttons">
-            <button class="restart">Replay Quiz</button>
-            <button class="quit">Quit Quiz</button>
-        </div>
     </div>
   </div>
 </template>
@@ -125,6 +112,7 @@ export default {
         //   this.timeInterval();
           this.mainquestion = ''
           document.getElementById("time_line").style.background = "#32723d"
+          this.nextque= false;
       },
       timeInterval(){
          this.firstinterval = setInterval(() => {
