@@ -112,7 +112,7 @@ export default {
           this.addinbox = false;
           this.startquizclass = true;
           this.apicall();
-          this.timeInterval();
+        //   this.timeInterval();
       },
       next_question() {
           this.questions = [];
@@ -122,8 +122,9 @@ export default {
           this.linewidth = 549;
           this.checkinganswer = -1,
           this.apicall();
-          this.timeInterval();
+        //   this.timeInterval();
           this.mainquestion = ''
+          document.getElementById("time_line").style.background = "#32723d"
       },
       timeInterval(){
          this.firstinterval = setInterval(() => {
@@ -142,7 +143,7 @@ export default {
                 if (this.linewidth == 0) {
                     clearInterval(this.secondinterval)
                 }
-              }, 28.4);
+              }, 29);
       },
       choosevalue(ch_value,index){
         this.ticking = true;
@@ -178,6 +179,7 @@ export default {
               this.questions.push(...response.data[0].incorrectAnswers);
               this.questions.sort();
               console.log("======>",response);
+              this.timeInterval();
           })
       }
   },
