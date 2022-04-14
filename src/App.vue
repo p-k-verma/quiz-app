@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
+  <div id="">
         <!-- start Quiz button -->
     <div class="start_btn"><button @click="start_quiz">Start Quiz</button></div>
 
     <!-- Info Box -->
-    <div class="info_box" :class="{activeInfo:quiz}">
+    <div class="info_box" :class="{openinfo:addinbox}">
         <div class="info-title"><span>Some Rules of this Quiz</span></div>
         <div class="info-list">
             <div class="info">1. You will have only <span>15 seconds</span> per each question.</div>
@@ -15,12 +15,12 @@
         </div>
         <div class="buttons">
             <button class="quit" @click="exit">Exit Quiz</button>
-            <button class="restart" @click="start_quiz, timeInterval">Continue</button>
+            <button class="restart" @click="startquiz">Continue</button>
         </div>
     </div>
 
     <!-- Quiz Box -->
-    <div class="quiz_box" :class="{activeQuiz:quiz}">
+    <div class="quiz_box"  :class="{quizclass:startquizclass}">
         <header>
             <div class="title">Awesome Quiz Application</div>
             <div class="timer">
@@ -81,6 +81,7 @@ export default {
   },
   data() {
       return {
+          addinbox: false,
         quiz: false,
         questions:[],
         category:"",
@@ -100,13 +101,19 @@ export default {
         secondinterval: null,
         ticking: false,
         checkinganswer: -1,
+        startquizclass: false,
       }
   },
   mounted() {
-      this.apicall();
-      this.timeInterval();
+      
   },
   methods: {
+      startquiz(){
+          this.addinbox = false;
+          this.startquizclass = true;
+          this.apicall();
+          this.timeInterval();
+      },
       next_question() {
           this.questions = [];
           this.activeAnswerIndex = -1;
@@ -116,6 +123,7 @@ export default {
           this.checkinganswer = -1,
           this.apicall();
           this.timeInterval();
+          this.mainquestion = ''
       },
       timeInterval(){
          this.firstinterval = setInterval(() => {
@@ -129,7 +137,7 @@ export default {
                 this.linewidth-- 
                 document.getElementById("time_line").style.width = `${this.linewidth}px`;
                 if (this.linewidth < 250) {
-                        document.getElementById("time_line").style.background = "red"
+                        document.getElementById("time_line").style.background = "#e25933"
                     }
                 if (this.linewidth == 0) {
                     clearInterval(this.secondinterval)
@@ -153,13 +161,15 @@ export default {
         }
       },
       start_quiz(){
-          this.quiz = true
+          this.quiz = true;
+          this.addinbox = true;
       },
       exit(){
-          this.quiz = false
+          this.quiz = false;
+          this.addinbox = false;
       },
-      apicall(){
-          axios
+     async apicall(){
+           axios
           .get('https://the-trivia-api.com/questions?limit=1')
           .then((response) => {
               this.mainquestion = response.data[0].question;
