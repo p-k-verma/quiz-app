@@ -39,8 +39,8 @@
                     <span>
                         {{option}}
                     </span>
-                    <div v-if="checkinganswer == index" class="icon" :class="{tick:checkinganswer == index}"><i class="fa fa-check" aria-hidden="true"></i></div>
-                    <div v-if="activeAnswerIndex == index" class="icon cross"><i class="fa fa-times" aria-hidden="true"></i></div>
+                    <div v-show="test" :class="['icon',{tick:correct_answer == option}]"><i v-show="correct_answer == option" class="fa fa-check" aria-hidden="true"></i></div>
+                    <div v-show="activeAnswerIndex == index" class="icon cross"><i class="fa fa-times" aria-hidden="true"></i></div>
                 </div>
             </div>
         </section>
@@ -80,7 +80,7 @@ export default {
         activeAnswerIndex:-1,
         choosen:'',
         timedata: 15,
-        linewidth: 549,
+        linewidth: 100,
         totalcorrect: 0,
         totaldone: 0,
         nextque: false,
@@ -89,6 +89,7 @@ export default {
         ticking: false,
         checkinganswer: -1,
         startquizclass: false,
+        test: false,
       }
   },
   mounted() {
@@ -106,37 +107,49 @@ export default {
           this.activeAnswerIndex = -1;
           this.disabled = false;
           this.timedata = 15;
-          this.linewidth = 549;
+          this.linewidth = 100;
           this.checkinganswer = -1,
           this.apicall();
         //   this.timeInterval();
           this.mainquestion = ''
           document.getElementById("time_line").style.background = "#32723d"
           this.nextque= false;
+          this.test = false;
       },
       timeInterval(){
          this.firstinterval = setInterval(() => {
               this.timedata--;
               if (this.timedata == 0) {
                   this.timedata = 0;
+                  this.disabled = true;
+                  this.ticking = true;
+                    this.nextque = true;
+                    // this.correct = true;
+                    this.test = true;
                   clearInterval(this.firstinterval)
               }
           }, 1000);
           this.secondinterval = setInterval(() => {
-                this.linewidth-- 
-                document.getElementById("time_line").style.width = `${this.linewidth}px`;
-                if (this.linewidth < 250) {
+              console.log(this.linewidth);
+                this.linewidth = this.linewidth - (6.666666666666667);
+                if(this.linewidth < 0){
+                    this.linewidth = 0;
+                } 
+                document.getElementById("time_line").style.width = `${this.linewidth}%`;
+                if (this.linewidth < 20) {
                         document.getElementById("time_line").style.background = "#e25933"
                     }
                 if (this.linewidth == 0) {
                     clearInterval(this.secondinterval)
                 }
-              }, 29);
+              }, 1000);
       },
       choosevalue(ch_value,index){
         this.ticking = true;
         this.disabled = true;
         this.nextque = true;
+        this.correct = true;
+        this.test = true;
         clearInterval(this.firstinterval)
         clearInterval(this.secondinterval)
         if (ch_value !== this.correct_answer) {            
